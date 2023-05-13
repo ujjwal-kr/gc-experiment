@@ -18,7 +18,7 @@ public:
 class Object {
 public:
 	TypeName type;
-	bool marked;
+	bool marked = false;
 	std::variant<int, Butterfly*> value;
 
 	void mark() {
@@ -52,10 +52,11 @@ public:
 		return this->stack[--this->size];
 	}
 
-	void pushInt(int value) {
+	Object* pushInt(int value) {
 		Object* object = this->newObject(INT);
 		object->value = value;
 		this->push(object);
+		return object;
 	}
 
 	Object* pushButterfly(Object* left, Object* right) {
@@ -64,18 +65,6 @@ public:
 		object->value = butterfly;
 		this->push(object);
 		return object;
-	}
-
-	Object* newObject(TypeName type) {
-		Object* object = new Object;
-		object->type = type;
-	}
-
-	Butterfly* newButterfly(Object* left, Object* right) {
-		Butterfly* butterfly = new Butterfly;
-		butterfly->left = left;
-		butterfly->right = right;
-		return butterfly;
 	}
 
 	// gc start
@@ -91,5 +80,19 @@ public:
 			if (object->marked) continue;
 			delete object;
 		}
+	}
+
+private:
+	Object* newObject(TypeName type) {
+		Object* object = new Object;
+		object->type = type;
+		return object;
+	}
+
+	Butterfly* newButterfly(Object* left, Object* right) {
+		Butterfly* butterfly = new Butterfly;
+		butterfly->left = left;
+		butterfly->right = right;
+		return butterfly;
 	}
 };
