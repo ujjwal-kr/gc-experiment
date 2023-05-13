@@ -67,24 +67,16 @@ public:
 	// gc start
 	
 	void markAll() {
-		int counter = 0;
-		for (Object*& object : this->stack) {
-			if (counter < this->size) {
-				object->mark();
-			}
-			counter++;
+		for (int i = 0; i < this->size; i++) {
+			this->stack[i]->mark();
 		}
 	}
 
 	void sweep() {
-		int counter = 0;
-		for (Object*& object : this->stack) {
-			if (counter < this->size) {
-				if (!object->marked) {
-					delete object;
-				}
+		for (int i = 0; i < this->size; i++) {
+			if (!this->stack[i]->marked) {
+				delete this->stack[i];
 			}
-			counter++;
 		}
 	}
 
