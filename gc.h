@@ -39,9 +39,6 @@ class VM {
 public:
 	VM() {
 		this->size = 0;
-		for (Object*& object : this->stack) {
-			object = nullptr;
-		}
 	}
 
 	void push(Object* value) {
@@ -70,15 +67,24 @@ public:
 	// gc start
 	
 	void markAll() {
+		int counter = 0;
 		for (Object*& object : this->stack) {
-			object->mark();
+			if (counter < this->size) {
+				object->mark();
+			}
+			counter++;
 		}
 	}
 
 	void sweep() {
+		int counter = 0;
 		for (Object*& object : this->stack) {
-			if (object->marked) continue;
-			delete object;
+			if (counter < this->size) {
+				if (!object->marked) {
+					delete object;
+				}
+			}
+			counter++;
 		}
 	}
 
