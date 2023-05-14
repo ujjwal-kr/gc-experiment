@@ -34,6 +34,7 @@ public:
 
 class VM {
 	Object* stack[CAPACITY];
+	int gcThreshold = 128;
 	int size;
 
 public:
@@ -43,6 +44,9 @@ public:
 
 	void push(Object* value) {
 		this->stack[this->size++] = value;
+		if (this->size == this->gcThreshold) {
+			this->gc();
+		}
 	}
 
 	Object* pop() {
@@ -78,6 +82,11 @@ public:
 				delete this->stack[i];
 			}
 		}
+	}
+
+	void gc() {
+		this->markAll();
+		this->sweep();
 	}
 
 private:
